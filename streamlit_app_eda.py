@@ -7,6 +7,7 @@ from pandas_profiling import ProfileReport
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.compose import ColumnTransformer
 from sklearn.metrics import mean_squared_error, r2_score, accuracy_score, classification_report
 import streamlit.components.v1 as components
 
@@ -22,15 +23,16 @@ if up_file is not None:
     st.expander("Bottom 10 Rows").write(pl_file.tail(10))
 
     df=pl_file.to_pandas()
+    
     st.sidebar.header("Data Cleaning Operations")
     if st.sidebar.checkbox("Drop NaN values"):
         df.dropna(inplace=True)
     if st.sidebar.checkbox("Remove Duplicate rows"):
         df.drop_duplicates(inplace=True)
-    if st.sidebar.checkbox("Normalise numeric columns"):
+    if st.sidebar.checkbox("Normalize numeric columns"):
         scaler = MinMaxScaler()
-        num_df=df.select_dtypes(include=['int','float'])
-        df[num_df]=scaler.fit_transform(df[num_df])
+        num_cols = df.select_dtypes(include='number').columns
+        df[num_cols] = scaler.fit_transform(df[num_cols])
     if st.sidebar.checkbox("Type Conversion"):
         col_conv=st.sidebar.selectbox("Select column to convert",df.columns)
         new_dtype=st.sidebar.selectbox("select new type",["int","float"])
@@ -44,13 +46,22 @@ if up_file is not None:
         if filt_val:
             df=df[df[filt_col].astype(str).str.contains(filt_val)]
         
+    st.subheader("Cleaned Data Preview")
+    if df.empty:
+        st.warning("DataFrame is empty after cleaning.")
+    else:
+        st.dataframe(df.head(100))
+        
+         
+    
+    st.subheader("Profiling Report")
 
-        st.expander("Cleaned Data")
-        st.dataframe(df.head(10))
     if st.checkbox("Generate profiling report"):
-        prof_rep=ProfileReport(df,explorative=True)
-        components.html(prof_rep.to_html(), height=1000, scrolling=True)
-
+        if df.empty or df.shape[1] == 0:
+            st.warning("DataFrame is empty. Cannot generate profiling report.")
+        else:
+            prof_rep = ProfileReport(df, explorative=True)
+            components.html(prof_rep.to_html(), height=1000, scrolling=True)
 
     st.subheader("Machine Learning")
     ml_type=st.selectbox("Type",["Regression","Classification"])
