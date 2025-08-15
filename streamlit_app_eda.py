@@ -1,17 +1,18 @@
 import streamlit as st
+from snowflake.snowpark.context import get_active_session
 import pandas as pd 
 import numpy as np
 import polars as pl
-from ydata_profiling import ProfileReport
+from pandas_profiling import ProfileReport
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error, r2_score, accuracy_score, classification_report
-from streamlit_pandas_profiling import st_profile_report
+import streamlit.components.v1 as components
 
 
 st.title("Data-Cleansing, Profiling & ML Tool")
-st.subheader("Muralikrishna")
+st.subheader("By Muralikrishna")
 
 up_file = st.file_uploader("Upload CSV", type=['csv'])
 if up_file is not None:
@@ -48,7 +49,7 @@ if up_file is not None:
         st.dataframe(df.head(10))
     if st.checkbox("Generate profiling report"):
         prof_rep=ProfileReport(df,explorative=True)
-        st_profile_report(prof_rep)
+        components.html(prof_rep.to_html(), height=1000, scrolling=True)
 
 
     st.subheader("Machine Learning")
@@ -73,7 +74,7 @@ if up_file is not None:
             st.write("Accuracy:",accuracy_score(ytest,y_pred)) # type: ignore
             st.text(classification_report(ytest,ypred))
         
-    if model is not None:
+    if ml_type is not None:
         st.subheader("User Input prediction")
         ip_pred=st.radio("Predict using:",["Manual Input","Upload File"])
         if ip_pred == "Manual Input":
@@ -85,15 +86,13 @@ if up_file is not None:
                 inp_pred=model.predict(pd.DataFrame([input_df]))
                 st.success(f"Prediction: {pred[0]}")
         else:
-            us_file=st.file_uploader("Upload new csv for prediction",type-["csv"])
+            us_file=st.file_uploader("Upload new csv for prediction",type=["csv"])
             if us_file:
                 new_df = pd.read_csv(us_file)
                 us_pred=model.predict(us_df[features]) # type: ignore
                 us_df['Predicitions']=us_pred
                 st.dataframe(us_df)
                 st.download_button("download predictions for user file",us_df.to_csv(Index=False),"user_file_predictions.csv")
-
-            
 
     
             
