@@ -1,7 +1,5 @@
-streamlit==1.45.1
-pandas==1.5.3
-numpy==1.23.5
-pandas-profiling==2.9.0
-scikit-learn==1.7.1
-polars==0.16.2
-pyarrow==11.0.0
+streamlit
+ydata-profiling
+scikit-learn
+polars
+
