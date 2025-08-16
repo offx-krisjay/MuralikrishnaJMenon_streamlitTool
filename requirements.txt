@@ -1,4 +1,4 @@
-python==3.10.*
+python==3.10
 streamlit=1.46.1
 ydata-profiling=4.16.1
 scikit-learn==1.7.1
