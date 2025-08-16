@@ -6,7 +6,7 @@ import polars as pl
 from pandas_profiling import ProfileReport
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler,LabelEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.metrics import mean_squared_error, r2_score, accuracy_score, classification_report
 import streamlit.components.v1 as components
@@ -62,7 +62,26 @@ if up_file is not None:
         else:
             prof_rep = ProfileReport(df, explorative=True)
             components.html(prof_rep.to_html(), height=1000, scrolling=True)
+    
+    st.subheader("Encoding")
 
+    if st.checkbox("Convert all String column to numerical value"):
+        cat_cols = df.select_dtypes(include=['object']).columns.tolist()
+        enc_type = st.selectbox("Encoding type", ["Label Encoding","One-Hot Encoding"])
+        if st.button("Encode"): 
+            if enc_type == "Label Encoding":
+                le = LabelEncoder()
+                for col in cat_cols:
+                    df[col + "_enc"] = le.fit_transform(df[col])
+                df.drop(columns=cat_cols, inplace=True)
+            else: 
+                df = pd.get_dummies(df, columns=cat_cols)
+                df.drop(columns=cat_cols, inplace=True)
+    st.subheader("Encoded Data Preview")
+    st.dataframe(df.head(100))
+        
+    
+ 
     st.subheader("Machine Learning")
     ml_type=st.selectbox("Type",["Regression","Classification"])
     features=st.multiselect("Select Features",df.columns)
@@ -75,15 +94,15 @@ if up_file is not None:
         if ml_type == "Regression":
             model = RandomForestRegressor()
             model.fit(xtrain,ytrain)
-            y_pred=model.predict(xtest)
-            st.write("R2 Score:",r2_score(ytest,y_pred))
-            st.write("Mean squared error:",mean_squared_error(ytest,y_pred))
+            rpred=model.predict(xtest)
+            st.write("R2 Score:",r2_score(ytest,rpred))
+            st.write("Mean squared error:",mean_squared_error(ytest,rpred))
         else:
             model = RandomForestClassifier()
             model.fit(xtrain,ytrain)
-            pred=model.predict(xtest)
-            st.write("Accuracy:",accuracy_score(ytest,y_pred)) # type: ignore
-            st.text(classification_report(ytest,ypred))
+            cpred=model.predict(xtest)
+            st.write("Accuracy:",accuracy_score(ytest,cpred)) # type: ignore
+            st.text(classification_report(ytest,cpred))
         
     if ml_type is not None:
         st.subheader("User Input prediction")
@@ -105,8 +124,6 @@ if up_file is not None:
                 st.dataframe(us_df)
                 st.download_button("download predictions for user file",us_df.to_csv(Index=False),"user_file_predictions.csv")
 
-    
-            
 
 
 
