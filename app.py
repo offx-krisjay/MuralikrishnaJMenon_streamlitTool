@@ -75,7 +75,7 @@ if up_file is not None:
                 df.drop(columns=cat_cols, inplace=True)
             else: 
                 df = pd.get_dummies(df, columns=cat_cols)
-                df.drop(columns=cat_cols, inplace=True)
+                
     st.subheader("Encoded Data Preview")
     st.dataframe(df.head(100))
         
