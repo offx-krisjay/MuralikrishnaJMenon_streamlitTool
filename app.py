@@ -21,7 +21,6 @@ if up_file is not None:
 
     df = pl_file.to_pandas()
 
-    # -------------------- Data Cleaning --------------------
     st.sidebar.header("Data Cleaning Operations")
     if st.sidebar.checkbox("Drop NaN values"):
         df.dropna(inplace=True)
@@ -49,8 +48,9 @@ if up_file is not None:
         st.warning("DataFrame is empty after cleaning.")
     else:
         st.dataframe(df.head(100))
+    clean_df=df
+    st.sidebar.download_button("Cleaned Data",clean_df.to_csv(index=False),"cleaned_data.csv")
 
-    # -------------------- Profiling --------------------
     st.subheader("Profiling Report")
     if st.checkbox("Generate profiling report"):
         if df.empty or df.shape[1] == 0:
@@ -59,7 +59,7 @@ if up_file is not None:
             prof_rep = ProfileReport(df, explorative=True)
             components.html(prof_rep.to_html(), height=1000, scrolling=True)
 
-    # -------------------- Encoding --------------------
+    
     st.subheader("Encoding")
     if st.checkbox("Convert all String columns to numerical value"):
         cat_cols = df.select_dtypes(include=['object']).columns.tolist()
@@ -76,7 +76,7 @@ if up_file is not None:
     st.subheader("Encoded Data Preview")
     st.dataframe(df.head(100))
 
-    # -------------------- Machine Learning --------------------
+
     st.subheader("Machine Learning")
     ml_type = st.selectbox("Type", ["Regression", "Classification"])
     features = st.multiselect("Select Features", df.columns)
@@ -99,7 +99,6 @@ if up_file is not None:
             st.write("Accuracy:", accuracy_score(ytest, cpred))
             st.text(classification_report(ytest, cpred))
 
-        # -------------------- User Prediction --------------------
         st.subheader("User Input Prediction")
         ip_pred = st.radio("Predict using:", ["Manual Input", "Upload File"])
         if ip_pred == "Manual Input":
