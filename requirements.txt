@@ -1,12 +1,12 @@
-polars
 streamlit
-ydata-profiling
 pandas
-matplotlib
 numpy
+polars
+ydata-profiling
+scikit-learn
+matplotlib
 seaborn
-
-
+setuptools
 
 
 
