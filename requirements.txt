@@ -1,12 +1,12 @@
 polars
 streamlit
 ydata-profiling
-pandas>1.1, <3, !=1.4.0
-matplotlib>=3.5, <3.10
-numpy>=1.16.0, <2
-htmlmin==0.1.12
-requests>=2.24.0, <3
-seaborn>=0.10.1, <0.14
+pandas
+matplotlib
+numpy
+htmlmin
+requests
+seaborn
 
 
 
