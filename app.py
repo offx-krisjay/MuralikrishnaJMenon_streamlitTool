@@ -83,7 +83,7 @@ if up_file is not None:
     target = st.selectbox("Select target", df.columns)
 
     if features and target:
-        X, y = df[features], df[target]
+        x, y = df[features], df[target]
         xtrain, xtest, ytrain, ytest = train_test_split(X, y, test_size=0.3, random_state=42)
 
         if ml_type == "Regression":
