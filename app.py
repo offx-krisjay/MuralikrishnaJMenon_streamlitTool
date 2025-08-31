@@ -80,10 +80,11 @@ if up_file is not None:
             
 
     st.subheader("Encoded Data Preview")
-    st.dataframe(df.head(100))
+    st.dataframe(st.session_state['working_df'].head(100))
 
 
     st.subheader("Machine Learning")
+    df = st.session_state['working_df']
     ml_type = st.selectbox("Type", ["Regression", "Classification"])
     features = st.multiselect("Select Features", df.columns)
     target = st.selectbox("Select target", df.columns)
