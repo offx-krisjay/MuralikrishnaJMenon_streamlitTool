@@ -20,6 +20,9 @@ if up_file is not None:
     st.expander("Bottom 10 Rows").write(pl_file.tail(10))
 
     df = pl_file.to_pandas()
+    
+    if 'working_df' not in st.session_state:
+        st.session_state['working_df'] = df.copy()
 
     st.sidebar.header("Data Cleaning Operations")
     if st.sidebar.checkbox("Drop NaN values"):
@@ -72,6 +75,9 @@ if up_file is not None:
                 df.drop(columns=cat_cols, inplace=True)
             else:
                 df = pd.get_dummies(df, columns=cat_cols)
+
+            st.session_state['working_df'] = df
+            
 
     st.subheader("Encoded Data Preview")
     st.dataframe(df.head(100))
