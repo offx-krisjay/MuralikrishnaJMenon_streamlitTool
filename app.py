@@ -86,36 +86,36 @@ if up_file is not None:
         X, y = df[features], df[target]
         xtrain, xtest, ytrain, ytest = train_test_split(X, y, test_size=0.3, random_state=42)
 
-            if ml_type == "Regression":
-                model = RandomForestRegressor()
-                model.fit(xtrain, ytrain)
-                rpred = model.predict(xtest)
-                st.write("R2 Score:", r2_score(ytest, rpred))
-                st.write("Mean squared error:", mean_squared_error(ytest, rpred))
-            else:
-                model = RandomForestClassifier()
-                model.fit(xtrain, ytrain)
-                cpred = model.predict(xtest)
-                st.write("Accuracy:", accuracy_score(ytest, cpred))
-                st.text(classification_report(ytest, cpred))
+        if ml_type == "Regression":
+            model = RandomForestRegressor()
+            model.fit(xtrain, ytrain)
+            rpred = model.predict(xtest)
+            st.write("R2 Score:", r2_score(ytest, rpred))
+            st.write("Mean squared error:", mean_squared_error(ytest, rpred))
+        else:
+            model = RandomForestClassifier()
+            model.fit(xtrain, ytrain)
+            cpred = model.predict(xtest)
+            st.write("Accuracy:", accuracy_score(ytest, cpred))
+            st.text(classification_report(ytest, cpred))
 
-            st.subheader("User Input Prediction")
-            ip_pred = st.radio("Predict using:", ["Manual Input", "Upload File"])
-            if ip_pred == "Manual Input":
-                input_df = {}
-                for col in features:
-                    val = st.text_input(f"Value for {col}")
-                    input_df[col] = float(val) if val else 0
-                if st.button("Predict"):
-                    inp_pred = model.predict(pd.DataFrame([input_df]))
-                    st.success(f"Prediction: {inp_pred[0]}")
-            else:
-                us_file = st.file_uploader("Upload new CSV for prediction", type=["csv"])
-                if us_file:
-                    us_df = pd.read_csv(us_file)
-                    us_pred = model.predict(us_df[features])
-                    us_df['Predictions'] = us_pred
-                    st.dataframe(us_df)
+        st.subheader("User Input Prediction")
+        ip_pred = st.radio("Predict using:", ["Manual Input", "Upload File"])
+        if ip_pred == "Manual Input":
+            input_df = {}
+            for col in features:
+                val = st.text_input(f"Value for {col}")
+                input_df[col] = float(val) if val else 0
+            if st.button("Predict"):
+                inp_pred = model.predict(pd.DataFrame([input_df]))
+                st.success(f"Prediction: {inp_pred[0]}")
+        else:
+            us_file = st.file_uploader("Upload new CSV for prediction", type=["csv"])
+            if us_file:
+                us_df = pd.read_csv(us_file)
+                us_pred = model.predict(us_df[features])
+                us_df['Predictions'] = us_pred
+                st.dataframe(us_df)
                     st.download_button(
                         "Download predictions for user file",
                         us_df.to_csv(index=False),
