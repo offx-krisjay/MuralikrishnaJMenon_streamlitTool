@@ -116,12 +116,12 @@ if up_file is not None:
                 us_pred = model.predict(us_df[features])
                 us_df['Predictions'] = us_pred
                 st.dataframe(us_df)
-                    st.download_button(
-                        "Download predictions for user file",
-                        us_df.to_csv(index=False),
-                        "user_file_predictions.csv",
-                        "text/csv"
-                    )
+                st.download_button(
+                    "Download predictions for user file",
+                    us_df.to_csv(index=False),
+                    "user_file_predictions.csv",
+                    "text/csv"
+                )
 
 
 
